@@ -1,0 +1,105 @@
+import { useEffect, useState } from "react"
+
+export function PaginationWithApi(){
+     
+    const [users,setUser]=useState([]);
+    const [loading,setLoading]=useState(true);
+    const [searchText,setSearchText]=useState("")
+
+    const [currentPage,setCurrentPage]=useState(1)
+    const NumberOfPost=5;
+
+    useEffect(()=>{
+           
+        fetch('https://jsonplaceholder.typicode.com/users').
+        then(res=>res.json()).
+        then(data=>setUser(data)).
+        catch(err=>console.error("failed to fetch",err)).
+        finally(()=>setLoading(false))
+
+    },[])
+
+    useEffect(() => {
+        setCurrentPage(1);
+      }, [searchText]);
+      
+
+
+    if(loading){
+        return <h1 className="text-green-400 text-center">Data is Loading...</h1>
+    }
+
+   
+    const searchFilter=users.filter(user=>
+        user.name.toLowerCase().includes(searchText.trim().toLowerCase())
+    )
+
+  
+// step 1
+    const indexOfLastUser=currentPage*NumberOfPost;
+            //    5      =         1 *5   
+            //  10   =          2*5
+// step 2
+
+    const indexOfFirstUser=indexOfLastUser-NumberOfPost;
+                // 0        =     5        - 5
+                // 5        =     10       - 5
+// step 3
+
+    const currentUsers=searchFilter.slice(indexOfFirstUser,indexOfLastUser);
+
+// step 4
+    const noOfLength=Math.ceil(searchFilter.length/NumberOfPost);
+
+ // step 5
+    const totalPage=Array.from({length:noOfLength},(_,i)=>i+1);
+
+// step 6
+    const pageNumber=(num)=>{
+        setCurrentPage(num)
+    }
+   
+    return(
+        <div className="container mx-auto p-6">
+            <div className="inputbox my-2">
+                <input type="text" placeholder="search user..." 
+                 className="border outline-0 border-gray-200 p-2 rounded"
+                 onChange={(e)=>setSearchText(e.target.value)}
+                 
+                 />
+            </div>
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          { currentUsers.length>0 ? (
+currentUsers?.map((user) => (
+    <div key={user.id} className="bg-white shadow-lg rounded-xl p-5 border border-gray-200 hover:shadow-xl transition">
+      <h2 className="text-xl font-semibold text-blue-600 mb-2">{user.name}</h2>
+      <p className="text-gray-700"><strong>📞</strong> {user.phone}</p>
+      <p className="text-gray-700"><strong>✉️</strong> {user.email}</p>
+    </div>
+  ))
+          ): <h1> data not found </h1>
+            
+          }
+        </div>
+        <div className="flex justify-center mt-6">
+  <div className="flex gap-2 flex-wrap bg-white p-4 rounded-lg shadow-md">
+    {totalPage?.map((pages) => (
+      <button
+        key={pages}
+        onClick={() => pageNumber(pages)}
+        className={`px-4 py-2 bg-blue-100 text-blue-700 rounded-md border border-blue-300 hover:bg-blue-600 hover:text-white transition duration-200
+            ${pages===currentPage ? "bg-blue-600 text-white":""}
+            `}
+      >
+        {pages}
+      </button>
+    ))}
+  </div>
+</div>
+
+   
+        
+      </div>
+      
+    )
+}

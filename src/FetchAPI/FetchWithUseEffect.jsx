@@ -85,7 +85,7 @@ const fetchData=()=>{
     // page no. buttons bante hai
 
     const pageNumbers=Array.from({length:totalPages},(_,i)=>i+1);
-    // output:[1,2,3,...,10]
+    // output:[1,2,3,...,9]
 
     // page no. click hone pr page badal do
 
