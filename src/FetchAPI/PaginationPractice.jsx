@@ -8,7 +8,7 @@ export function PaginationWithApi(){
     const [searchField,setSearchField]=useState("name");
 
     const [currentPage,setCurrentPage]=useState(1)
-    const NumberOfPost=2;
+    const NumberOfPost=4;
 
     useEffect(()=>{
            
@@ -80,6 +80,10 @@ export function PaginationWithApi(){
       setCurrentPage((prev)=>Math.min(prev+1,totalPage.length))
     }
    
+    const handleDelete=(id)=>{
+        const updateUser= users.filter( user=>user.id!==id);
+        setUser(updateUser);
+    }
 
     return(
         <div className="container mx-auto p-6">
@@ -103,9 +107,23 @@ export function PaginationWithApi(){
           { currentUsers.length>0 ? (
 currentUsers?.map((user) => (
     <div key={user.id} className="bg-white shadow-lg rounded-xl p-5 border border-gray-200 hover:shadow-xl transition">
+    
+      <div className="flex justify-between">
       <h2 className="text-xl font-semibold text-blue-600 mb-2">{user.name}</h2>
+
+              {/* Delete button */}
+      <button
+        onClick={() => handleDelete(user.id)}
+        className=" text-red-500 hover:text-red-700 min-w-[60px]"
+        title="Delete User"
+      >
+        🗑️ delete
+      </button>
+      </div>
       <p className="text-gray-700"><strong>📞</strong> {user.phone}</p>
       <p className="text-gray-700"><strong>✉️</strong> {user.email}</p>
+
+
     </div>
   ))
           ): <h1> data not found </h1>
