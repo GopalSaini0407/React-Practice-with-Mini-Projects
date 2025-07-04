@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { Model } from "./Model";
+import { EditUserForm } from "./EditModelForm";
 
 export function PaginationWithApi(){
      
@@ -6,6 +8,9 @@ export function PaginationWithApi(){
     const [loading,setLoading]=useState(true);
     const [searchText,setSearchText]=useState("");
     const [searchField,setSearchField]=useState("name");
+    
+    const [editUser,setEditUser]=useState(null);
+    const [showEditModal,setShowEditModal]=useState(false);
 
     const [currentPage,setCurrentPage]=useState(1)
     const NumberOfPost=4;
@@ -82,7 +87,15 @@ export function PaginationWithApi(){
    
     const handleDelete=(id)=>{
         const updateUser= users.filter( user=>user.id!==id);
+        console.log(updateUser)
         setUser(updateUser);
+    }
+
+    const handleSaveUser=(updatedUser)=>{
+      const updatedUsers=users.map((user)=>
+      user.id===updatedUser.id ? updatedUser:user
+      );
+      setUser(updatedUsers)
     }
 
     return(
@@ -114,7 +127,7 @@ currentUsers?.map((user) => (
               {/* Delete button */}
       <button
         onClick={() => handleDelete(user.id)}
-        className=" text-red-500 hover:text-red-700 min-w-[60px]"
+        className=" text-red-500 hover:text-red-700 min-w-[60px] cursor-pointer"
         title="Delete User"
       >
         🗑️ delete
@@ -123,6 +136,17 @@ currentUsers?.map((user) => (
       <p className="text-gray-700"><strong>📞</strong> {user.phone}</p>
       <p className="text-gray-700"><strong>✉️</strong> {user.email}</p>
 
+      <button 
+  className="px-3 py-1 my-3 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition-all duration-200 ease-in-out min-w-[70px]"
+  title="Edit User"
+
+  onClick={()=>{
+    setEditUser(user);
+    setShowEditModal(true)
+  }}
+>
+  ✏️ Edit
+</button>
 
     </div>
   ))
@@ -159,6 +183,18 @@ currentUsers?.map((user) => (
   </div>
 </div>
 
+{/* ✅ Modal for Editing User */}
+<Model
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        size="w-[90%] max-w-lg"
+      >
+        <EditUserForm
+          userData={editUser}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleSaveUser}
+        />
+      </Model>
    
         
       </div>
